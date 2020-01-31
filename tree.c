@@ -70,14 +70,30 @@ void print(struct Node *node,int space){
     print(node->left, space);  
 }
 
+int findMin(struct Node *node){
+  struct Node *tmp = node; 
+  while(tmp->left != NULL){
+    tmp = tmp->left;
+  }
+  int val = tmp->value;
+  tmp->parent->left = NULL;
+  free(tmp->parent->left);
+  return val;
+}
+
 void del(struct Tree *tree,int value){
   struct Node *node = tree->head;
   while(1){
-    if(node == NULL){
-      printf("didn't find the value");
+    if(node->value == value && node->left != NULL && node->right != NULL){
+      int tmp = findMin(node->right);
+      node->value = tmp;
       break;
     }
-    if(node->value > value && node->left != NULL){
+    if(node->value >= value){
+      if(node->left == NULL){
+	printf("didn't find the value");
+	break;
+      } 
       //no child
       if(node->left->value == value && node->left->left == NULL && node->left->right ==NULL){
 	node->left = NULL;
@@ -99,7 +115,11 @@ void del(struct Tree *tree,int value){
       } 
       node = node->left;
     }
-    if(node->value < value && node->right != NULL){
+    if(node->value <= value){
+      if(node->right == NULL){
+	printf("didn't find the value"); 
+	break;
+      }  
       //no child
       if(node->right->value == value && node->right->left == NULL && node->right->right ==NULL){
         node->right = NULL;
@@ -130,13 +150,14 @@ int main(){
   insert(&tree,50);
   insert(&tree,30);
   insert(&tree,70);
-  insert(&tree,20);                                                                                                                    
-  insert(&tree,40);                                                                                                                    
-  insert(&tree,60);                                                                                                                    
-  insert(&tree,80);                                                                                                                    
-  del(&tree,20);
-  del(&tree,30);
-  del(&tree,1);
+  insert(&tree,20);
+  insert(&tree,40);
+  insert(&tree,60);
+  insert(&tree,80);
+  // del(&tree,20);
+  //del(&tree,30);
+  //del(&tree,50);
+  //del(&tree,100);
   print(tree.head,0);
   return 0;
 }
